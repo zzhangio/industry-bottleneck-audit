@@ -13,24 +13,25 @@ Apply [human-review-compression.md](human-review-compression.md) before laying o
 
 Generate an HTML artifact when the user explicitly asks for a visual, when the report will be revisited over time, or when clicking through evidence materially improves auditability. Do not generate one automatically for a small chat-only answer.
 
-## Required Astra Visual Pass
+## Required Visual Acceptance Pass
 
-Every standalone HTML visual must be generated or materially authored by a fresh `gpt-6-astra` subagent with `medium` reasoning. Astra participation only as a late reviewer is insufficient. Treat Astra as the HTML visual author and usability specialist, not the owner of facts or analytical conclusions.
+Prefer a fresh visual-author agent for standalone HTML. `gpt-6-astra` with `medium` reasoning is a recommended configuration, not a runtime dependency. Other available models follow the same workflow and acceptance checks. The visual author is not the owner of facts or analytical conclusions. If no separate agent is available, perform authoring and review as distinct stages and record that this is self-review, not independent review.
 
 Use the collaboration in these stages:
 
 1. The primary agent freezes the validated bundle, focal hierarchy, editorial compression, and non-negotiable claim/evidence boundaries.
-2. A fresh Astra agent at `medium` generates the HTML draft or performs the material visual rewrite. Give it the validated data and visual contract, not permission to invent facts.
+2. The visual-author agent generates the HTML draft or performs the material visual rewrite. Give it the validated data and visual contract, not permission to invent facts.
 3. The primary agent checks the generated HTML against the bundle, repairs factual/ID/accessibility defects, and records any analytical change it rejected.
-4. Astra performs the final visual/usability pass after material corrections when practical. The primary agent then runs browser, interaction, mobile, and overflow checks.
+4. The visual author performs the final visual/usability pass after material corrections when practical. The primary agent then runs browser, interaction, mobile, and overflow checks.
 
-Astra may recommend layout, styling, labels that preserve meaning, and interaction changes. It may not silently alter `Y/Q/Omega`, claim text, epistemic status, node/edge IDs, evidence links, minimum-cut membership, company mapping, falsifiers, or observed-versus-forecast status. The primary agent owns those fields.
+The visual author may recommend layout, styling, labels that preserve meaning, and interaction changes. It may not silently alter `Y/Q/Omega`, claim text, epistemic status, node/edge IDs, evidence links, minimum-cut membership, company mapping, falsifiers, or observed-versus-forecast status. The primary agent owns those fields.
 
 Keep a short `visual-review.md` beside a reusable or published HTML artifact containing:
 
 ```text
-requested reviewer: gpt-6-astra
-reasoning effort: medium
+actual author/reviewer model: record available identifier or unknown
+reasoning effort: record actual setting or unknown
+review mode: independent agent / staged self-review
 generation role: initial HTML / material rewrite / final visual pass
 review date
 artifact reviewed
@@ -40,7 +41,7 @@ rejected changes and reason
 remaining visual limitations
 ```
 
-Do not silently substitute another model. If `gpt-6-astra` at `medium` is unavailable, do not generate or materially revise a standalone HTML visual as a final artifact. A non-Astra scaffold may exist only as `draft_astra_generation_pending`; disclose that the required generation gate has not passed.
+Record the actual model and review mode; never claim an unavailable model or independent review was used. Model unavailability alone does not block delivery. Missing fact checks or browser, interaction, mobile, or overflow checks do: keep the artifact marked `draft_visual_review_pending` and disclose the uncompleted checks.
 
 ## Focal Hierarchy Before Layout
 
@@ -162,4 +163,4 @@ Keep stable `node_id`, `edge_id`, and `claim_id` values across reruns. A later v
 - The visual states what remains unknown and what would change the judgment.
 - Company capture is not implied by node importance alone.
 - Mobile text does not overlap, and the topology remains usable without hover.
-- The adjacent visual review records `gpt-6-astra` with `medium` reasoning, the review disposition, and any remaining limitation.
+- The adjacent visual review records the actual model, review mode, completed checks, disposition, and remaining limitations.
