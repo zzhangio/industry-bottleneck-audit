@@ -1,0 +1,4 @@
+interface:
+  display_name: "产业窄口审计"
+  short_description: "快速筛查或完整审计产业窄口、议价权与结构变化"
+  default_prompt: "使用 $industry-bottleneck-audit 分析这个行业、公司或新技术。若我没有指定深度，先做快速版；若我明确要求完整、深入、可审计交付，或交付物需要可复用数据集、版本重建、正式验证或冲突裁决，直接做完整版。"

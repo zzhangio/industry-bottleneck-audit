@@ -1,0 +1,245 @@
+{
+  "schema_version": "1.0-draft.3",
+  "audit_id": "example-qualified-service",
+  "mode": "industry_first",
+  "title": "Synthetic qualified-service example",
+  "case": {
+    "Y": "A qualified service delivered inside the agreed response window",
+    "Q": "Accepted service capacity",
+    "Omega": "One region, one customer class, current qualification rules",
+    "as_of": "2026-10-29",
+    "evidence_cutoff": "2026-10-29",
+    "exclusions": ["Unqualified providers", "Demand outside the named region"]
+  },
+  "structure": {
+    "classification": "conditional_cone",
+    "minimum_cut": ["N2"],
+    "alternatives": ["N3"],
+    "largest_unknowns": ["Whether the alternative can pass customer qualification on schedule"]
+  },
+  "nodes": [
+    {
+      "node_id": "N1",
+      "label": "Customer request",
+      "function": "Defines the accepted output and response window",
+      "owner": "Customer",
+      "qualification": "Contract specification",
+      "effective_width_basis": "Number of requests within scope",
+      "substitutes": [],
+      "constraint_role": {
+        "gate_level": "low",
+        "gate_mechanism": "The request defines scope but does not itself withhold qualified provider passage",
+        "release_condition": "A complete contract specification is issued",
+        "leverage_level": "medium",
+        "leverage_mechanism": "One accepted specification coordinates all downstream service work",
+        "activation_dependency": "The role matters when provider work must converge on one acceptance contract",
+        "observable": "Specification changes alter qualification or accepted output across providers"
+      },
+      "scores": {
+        "B_struct": 1,
+        "B_now": 1,
+        "P_joint": 1,
+        "P_own": 1,
+        "P_cycle": 1,
+        "P_now": 1,
+        "E": 4
+      },
+      "evidence_ids": ["S1"],
+      "unknowns": []
+    },
+    {
+      "node_id": "N2",
+      "label": "Qualified provider",
+      "function": "Converts available capacity into accepted service",
+      "owner": "Incumbent provider",
+      "qualification": "Customer approval and operating record",
+      "effective_width_basis": "Qualified, available, economical service paths",
+      "substitutes": ["N3"],
+      "constraint_role": {
+        "gate_level": "high",
+        "gate_mechanism": "Accepted service cannot pass while the incumbent is the only qualified operating path",
+        "release_condition": "A substitute becomes qualified, available, and economical",
+        "leverage_level": "medium",
+        "leverage_mechanism": "Additional accepted capacity releases multiple customer requests",
+        "activation_dependency": "Demand reaches the capacity of the only qualified operating path",
+        "observable": "Allocation, lead time, accepted volume, or terms change when qualified width changes"
+      },
+      "scores": {
+        "B_struct": 4,
+        "B_now": 3,
+        "P_joint": 4,
+        "P_own": 3,
+        "P_cycle": 3,
+        "P_now": 3,
+        "E": 3
+      },
+      "evidence_ids": ["S1"],
+      "unknowns": ["Exact spare qualified capacity"]
+    },
+    {
+      "node_id": "N3",
+      "label": "Alternative provider",
+      "function": "Potential second qualified path",
+      "owner": "Alternative provider",
+      "qualification": "Pending customer approval",
+      "effective_width_basis": "Qualification completion and available capacity",
+      "substitutes": ["N2"],
+      "constraint_role": {
+        "gate_level": "medium",
+        "gate_mechanism": "The alternative cannot carry accepted output until customer qualification is complete",
+        "release_condition": "Customer approval plus available economical capacity",
+        "leverage_level": "medium",
+        "leverage_mechanism": "A qualified second path can widen service capacity and bargaining options",
+        "activation_dependency": "The incumbent remains capacity-constrained or commercially restrictive",
+        "observable": "Orders, allocation, lead time, or terms move after qualification"
+      },
+      "scores": {
+        "B_struct": 2,
+        "B_now": 1,
+        "P_joint": 2,
+        "P_own": 1,
+        "P_cycle": 1,
+        "P_now": 1,
+        "E": 2
+      },
+      "evidence_ids": ["S1"],
+      "unknowns": ["Qualification outcome"]
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "E1",
+      "from": "N1",
+      "to": "N2",
+      "transmitted_object": "Accepted specification and order",
+      "mechanism": "The request becomes deliverable only through a qualified provider",
+      "status": "observed",
+      "lag": "One contract cycle",
+      "counterforces": ["Customer can delay the order"],
+      "evidence_ids": ["S1"],
+      "falsifier": "The customer accepts an unqualified provider without delay or redesign"
+    },
+    {
+      "edge_id": "E2",
+      "from": "N3",
+      "to": "N2",
+      "transmitted_object": "Substitution pressure",
+      "mechanism": "Qualification of the alternative increases effective width",
+      "status": "conditional",
+      "lag": "Two qualification cycles",
+      "counterforces": ["Qualification failure", "Insufficient alternative capacity"],
+      "evidence_ids": ["S1"],
+      "falsifier": "The alternative qualifies but does not change allocation, lead time, or terms"
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "C1",
+      "plain_claim": "The customer currently has one accepted operating path, but a second path is being tested.",
+      "technical_claim": "Within the frozen boundary, N2 is the current minimum cut and N3 is a conditional substitute.",
+      "status": "conditional",
+      "epistemic_type": "mixed",
+      "evidence_ids": ["S1"],
+      "unknowns": ["N3 qualification outcome"],
+      "falsifier": "N3 qualifies and expands qualified output without rework",
+      "review_trigger": "N3 qualification decision or 2027-04-30",
+      "hypothesis_id": "H1",
+      "hypothesis_version": 1
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "S1",
+      "title": "Synthetic source used only to demonstrate the schema",
+      "url": "https://example.com/synthetic-source",
+      "source_type": "other",
+      "published_at": "2026-10-20",
+      "accessed_at": "2026-10-29",
+      "primary": true,
+      "limitations": "This is not real-world evidence and must not be used outside the example."
+    }
+  ],
+  "rights": [
+    {
+      "right_id": "R1",
+      "right_type": "acceptance",
+      "actor": "Customer qualification team",
+      "scope": "Approves providers for this output",
+      "evidence_ids": ["S1"],
+      "confidence": "high"
+    }
+  ],
+  "companies": [
+    {
+      "company_id": "COMP1",
+      "name": "Synthetic incumbent provider",
+      "segment_department": "Qualified service unit",
+      "node_ids": ["N2"],
+      "mapping_label": "partial_match",
+      "right_ids": [],
+      "commercial_lever": "Can negotiate allocation and service terms while it remains the only qualified operating path",
+      "customer_counterpower": "The customer controls qualification and is sponsoring N3",
+      "scores": {
+        "P_joint": 4,
+        "P_own": 3,
+        "P_cycle": 3,
+        "P_now": 3
+      },
+      "segment_materiality": "Unknown in this synthetic example",
+      "evidence_ids": ["S1"],
+      "falsifier": "N3 qualifies and changes allocation or terms without material rework",
+      "review_trigger": "N3 qualification decision"
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "H1",
+      "version": 1,
+      "boundary": "The frozen region and customer class",
+      "baseline_date": "2026-10-29",
+      "mechanism": "Qualification limits accepted service to N2 until N3 passes",
+      "status": "registered",
+      "trigger_event": "N3 qualification decision",
+      "expected_observable": "Qualified output, allocation, lead time, or terms change after N3 enters",
+      "prediction_window": "By 2027-04-30",
+      "falsifier": "N3 qualifies but does not increase an accepted and economical path",
+      "escape_conditions": ["N3 has no available capacity"],
+      "successor_constraint": "Available economical capacity after qualification",
+      "rights_shift": "Acceptance remains with the customer while allocation power becomes less concentrated",
+      "evidence_ids": ["S1"],
+      "next_review_trigger": "N3 qualification decision or 2027-04-30"
+    }
+  ],
+  "events": [],
+  "snapshots": [
+    {
+      "snapshot_id": "SNAP1",
+      "as_of": "2026-10-29",
+      "evidence_cutoff": "2026-10-29",
+      "system_boundary": "One region, one customer class, current qualification rules",
+      "node_ids": ["N1", "N2", "N3"],
+      "claim_ids": ["C1"],
+      "evidence_ids": ["S1"],
+      "review_note": "Initial synthetic snapshot before N3 qualification"
+    }
+  ],
+  "predictions": [
+    {
+      "prediction_id": "P1",
+      "claim_id": "C1",
+      "expected_change": "Successful qualification of N3 increases qualified effective width",
+      "horizon": "By 2027-04-30",
+      "observable": "Orders, allocation, lead time, or contract terms move to N3",
+      "counterforce": "N3 lacks economical capacity after qualification",
+      "invalidating_result": "N3 qualifies but the system remains single-path for reasons outside the frozen boundary",
+      "status": "registered"
+    }
+  ],
+  "adoption_paths": [],
+  "topology_transitions": [],
+  "views": {
+    "technical_claim_ids": ["C1"],
+    "nontechnical_claim_ids": ["C1"],
+    "low_impact_control": null
+  }
+}

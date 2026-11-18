@@ -1,0 +1,721 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skills/industry-bottleneck-audit/audit-bundle.schema.json",
+  "title": "Industry Bottleneck Audit Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "audit_id",
+    "mode",
+    "title",
+    "case",
+    "structure",
+    "nodes",
+    "edges",
+    "claims",
+    "sources",
+    "rights",
+    "companies",
+    "hypotheses",
+    "events",
+    "snapshots",
+    "predictions",
+    "views"
+  ],
+  "properties": {
+    "schema_version": { "enum": ["1.0-draft", "1.0-draft.1", "1.0-draft.2", "1.0-draft.3"] },
+    "audit_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]+$" },
+    "mode": {
+      "enum": ["industry_first", "technology_first", "dynamic", "evidence_event"]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "case": { "$ref": "#/$defs/case" },
+    "structure": { "$ref": "#/$defs/structure" },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/claim" }
+    },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "rights": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/right" }
+    },
+    "companies": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/company" }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/hypothesis" }
+    },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "snapshots": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/snapshot" }
+    },
+    "predictions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/prediction" }
+    },
+    "scale_balances": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/scaleBalance" }
+    },
+    "adoption_paths": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/adoptionPath" }
+    },
+    "topology_transitions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/topologyTransition" }
+    },
+    "views": { "$ref": "#/$defs/views" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "schema_version": { "const": "1.0-draft.2" } },
+        "required": ["schema_version"]
+      },
+      "then": { "required": ["adoption_paths"] }
+    },
+    {
+      "if": {
+        "properties": { "schema_version": { "const": "1.0-draft.3" } },
+        "required": ["schema_version"]
+      },
+      "then": { "required": ["adoption_paths", "topology_transitions"] }
+    }
+  ],
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "idArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "score": {
+      "oneOf": [
+        { "type": "integer", "minimum": 0, "maximum": 5 },
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "explanation"],
+          "properties": {
+            "status": { "enum": ["point", "range", "unknown", "not_applicable"] },
+            "value": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "lower": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "upper": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "explanation": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Y", "Q", "Omega", "as_of", "evidence_cutoff", "exclusions"],
+      "properties": {
+        "Y": { "type": "string", "minLength": 1 },
+        "Q": { "type": "string", "minLength": 1 },
+        "Omega": { "type": "string", "minLength": 1 },
+        "as_of": { "$ref": "#/$defs/date" },
+        "evidence_cutoff": { "$ref": "#/$defs/date" },
+        "exclusions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "minimum_cut", "alternatives", "largest_unknowns"],
+      "properties": {
+        "classification": {
+          "enum": [
+            "direct_cone",
+            "feedback_cone",
+            "institutional_cone",
+            "emergent_cluster_cone",
+            "conditional_cone",
+            "cyclical_narrowness",
+            "hidden_cone",
+            "divergent_network",
+            "non_cone_network",
+            "unresolved"
+          ]
+        },
+        "minimum_cut": { "$ref": "#/$defs/idArray" },
+        "alternatives": { "$ref": "#/$defs/idArray" },
+        "largest_unknowns": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_id",
+        "label",
+        "function",
+        "owner",
+        "qualification",
+        "effective_width_basis",
+        "substitutes",
+        "scores",
+        "evidence_ids",
+        "unknowns"
+      ],
+      "properties": {
+        "node_id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "function": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "qualification": { "type": "string", "minLength": 1 },
+        "effective_width_basis": { "type": "string", "minLength": 1 },
+        "substitutes": { "$ref": "#/$defs/idArray" },
+        "constraint_role": { "$ref": "#/$defs/constraintRole" },
+        "scores": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["B_struct", "B_now", "P_joint", "P_own", "P_cycle", "P_now", "E"],
+          "properties": {
+            "B_struct": { "$ref": "#/$defs/score" },
+            "B_now": { "$ref": "#/$defs/score" },
+            "P_joint": { "$ref": "#/$defs/score" },
+            "P_own": { "$ref": "#/$defs/score" },
+            "P_cycle": { "$ref": "#/$defs/score" },
+            "P_now": { "$ref": "#/$defs/score" },
+            "E": { "$ref": "#/$defs/score" }
+          }
+        },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "unknowns": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edge_id",
+        "from",
+        "to",
+        "transmitted_object",
+        "mechanism",
+        "status",
+        "lag",
+        "counterforces",
+        "evidence_ids",
+        "falsifier"
+      ],
+      "properties": {
+        "edge_id": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "transmitted_object": { "type": "string", "minLength": 1 },
+        "mechanism": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["observed", "inferred", "conditional", "speculative"] },
+        "lag": { "type": "string", "minLength": 1 },
+        "counterforces": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "falsifier": { "type": "string", "minLength": 1 }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "plain_claim",
+        "technical_claim",
+        "status",
+        "epistemic_type",
+        "evidence_ids",
+        "unknowns",
+        "falsifier",
+        "review_trigger"
+      ],
+      "dependentRequired": {
+        "hypothesis_id": ["hypothesis_version"],
+        "hypothesis_version": ["hypothesis_id"]
+      },
+      "properties": {
+        "claim_id": { "type": "string", "minLength": 1 },
+        "plain_claim": { "type": "string", "minLength": 1 },
+        "technical_claim": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["anchored", "conditional", "speculative", "broken", "stale"] },
+        "epistemic_type": { "enum": ["fact", "inference", "mixed", "unknown"] },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "unknowns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "falsifier": { "type": "string", "minLength": 1 },
+        "review_trigger": { "type": "string", "minLength": 1 },
+        "hypothesis_id": { "type": ["string", "null"] },
+        "hypothesis_version": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "title",
+        "url",
+        "source_type",
+        "published_at",
+        "accessed_at",
+        "primary",
+        "limitations"
+      ],
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "pattern": "^https?://" },
+        "source_type": {
+          "enum": ["official", "regulatory", "company", "paper", "market_data", "industry", "media", "other"]
+        },
+        "published_at": {
+          "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+        },
+        "accessed_at": { "$ref": "#/$defs/date" },
+        "primary": { "type": "boolean" },
+        "limitations": { "type": "string", "minLength": 1 }
+      }
+    },
+    "right": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["right_id", "right_type", "actor", "scope", "evidence_ids", "confidence"],
+      "properties": {
+        "right_id": { "type": "string", "minLength": 1 },
+        "right_type": {
+          "enum": ["value_definition", "constraint_encoding", "delegation", "acceptance", "modification", "appeal", "responsibility", "feedback"]
+        },
+        "actor": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "confidence": { "enum": ["low", "medium", "high"] }
+      }
+    },
+    "company": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_id",
+        "name",
+        "segment_department",
+        "node_ids",
+        "mapping_label",
+        "right_ids",
+        "commercial_lever",
+        "customer_counterpower",
+        "scores",
+        "segment_materiality",
+        "evidence_ids",
+        "falsifier",
+        "review_trigger"
+      ],
+      "properties": {
+        "company_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "segment_department": { "type": "string", "minLength": 1 },
+        "node_ids": { "$ref": "#/$defs/idArray" },
+        "mapping_label": { "enum": ["strong_match", "partial_match", "coalition", "no_clean_match"] },
+        "right_ids": { "$ref": "#/$defs/idArray" },
+        "commercial_lever": { "type": "string", "minLength": 1 },
+        "customer_counterpower": { "type": "string", "minLength": 1 },
+        "scores": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["P_joint", "P_own", "P_cycle", "P_now"],
+          "properties": {
+            "P_joint": { "$ref": "#/$defs/score" },
+            "P_own": { "$ref": "#/$defs/score" },
+            "P_cycle": { "$ref": "#/$defs/score" },
+            "P_now": { "$ref": "#/$defs/score" }
+          }
+        },
+        "segment_materiality": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "falsifier": { "type": "string", "minLength": 1 },
+        "review_trigger": { "type": "string", "minLength": 1 }
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hypothesis_id",
+        "version",
+        "boundary",
+        "baseline_date",
+        "mechanism",
+        "status",
+        "trigger_event",
+        "expected_observable",
+        "prediction_window",
+        "falsifier",
+        "escape_conditions",
+        "successor_constraint",
+        "rights_shift",
+        "evidence_ids",
+        "next_review_trigger"
+      ],
+      "properties": {
+        "hypothesis_id": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 },
+        "boundary": { "type": "string", "minLength": 1 },
+        "baseline_date": { "$ref": "#/$defs/date" },
+        "mechanism": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["registered", "anchored", "supported", "weakened", "falsified", "boundary_changed", "stale"] },
+        "trigger_event": { "type": "string", "minLength": 1 },
+        "expected_observable": { "type": "string", "minLength": 1 },
+        "prediction_window": { "type": "string", "minLength": 1 },
+        "falsifier": { "type": "string", "minLength": 1 },
+        "escape_conditions": { "type": "array", "items": { "type": "string" } },
+        "successor_constraint": { "type": "string", "minLength": 1 },
+        "rights_shift": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "next_review_trigger": { "type": "string", "minLength": 1 }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "source_ids",
+        "published_at",
+        "effective_at",
+        "observed_at",
+        "prior_hypothesis_id",
+        "prior_hypothesis_version",
+        "direct_fact",
+        "update_target",
+        "update_relation",
+        "revised_hypothesis_version",
+        "observed_change_now",
+        "expected_prediction_ids",
+        "counterforces",
+        "next_verification_at",
+        "rebuild_required"
+      ],
+      "properties": {
+        "event_id": { "type": "string", "minLength": 1 },
+        "source_ids": { "$ref": "#/$defs/idArray" },
+        "published_at": { "$ref": "#/$defs/date" },
+        "effective_at": { "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+        "observed_at": { "$ref": "#/$defs/date" },
+        "prior_hypothesis_id": { "type": "string", "minLength": 1 },
+        "prior_hypothesis_version": { "type": "integer", "minimum": 1 },
+        "direct_fact": { "type": "string", "minLength": 1 },
+        "update_target": { "type": "string", "minLength": 1 },
+        "update_relation": { "enum": ["strengthens", "weakens", "falsifies", "conditions", "refines", "no_change"] },
+        "revised_hypothesis_version": { "type": "integer", "minimum": 1 },
+        "observed_change_now": { "type": "string", "minLength": 1 },
+        "expected_prediction_ids": { "$ref": "#/$defs/idArray" },
+        "counterforces": { "type": "array", "items": { "type": "string" } },
+        "next_verification_at": { "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+        "rebuild_required": { "type": "boolean" }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_id", "as_of", "evidence_cutoff", "system_boundary", "node_ids", "claim_ids", "evidence_ids", "review_note"],
+      "properties": {
+        "snapshot_id": { "type": "string", "minLength": 1 },
+        "as_of": { "$ref": "#/$defs/date" },
+        "evidence_cutoff": { "$ref": "#/$defs/date" },
+        "system_boundary": { "type": "string", "minLength": 1 },
+        "node_ids": { "$ref": "#/$defs/idArray" },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "review_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "prediction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prediction_id",
+        "claim_id",
+        "expected_change",
+        "horizon",
+        "observable",
+        "counterforce",
+        "invalidating_result",
+        "status"
+      ],
+      "properties": {
+        "prediction_id": { "type": "string", "minLength": 1 },
+        "claim_id": { "type": "string", "minLength": 1 },
+        "expected_change": { "type": "string", "minLength": 1 },
+        "horizon": { "type": "string", "minLength": 1 },
+        "observable": { "type": "string", "minLength": 1 },
+        "counterforce": { "type": "string", "minLength": 1 },
+        "invalidating_result": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["registered", "not_due", "supported", "weakened", "falsified", "boundary_changed", "attribution_unresolved"] }
+      }
+    },
+    "scaleObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "basis", "evidence_ids"],
+      "properties": {
+        "status": { "enum": ["observed", "inferred", "unknown", "not_applicable"] },
+        "value": { "type": "string", "minLength": 1 },
+        "basis": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" }
+      }
+    },
+    "scaleBalance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scale_balance_id",
+        "node_id",
+        "before_snapshot_id",
+        "after_snapshot_id",
+        "boundary_and_unit",
+        "qualified_volume",
+        "unit_labor",
+        "total_labor_or_headcount",
+        "role_and_wage_mix",
+        "organization_or_site_count",
+        "unit_cost",
+        "total_spend_or_revenue",
+        "queue_or_service_level",
+        "released_capacity_destination",
+        "rebound_or_induced_demand",
+        "classification",
+        "comparability_notes",
+        "unknowns"
+      ],
+      "properties": {
+        "scale_balance_id": { "type": "string", "minLength": 1 },
+        "node_id": { "type": "string", "minLength": 1 },
+        "before_snapshot_id": { "type": ["string", "null"] },
+        "after_snapshot_id": { "type": ["string", "null"] },
+        "boundary_and_unit": { "type": "string", "minLength": 1 },
+        "qualified_volume": { "$ref": "#/$defs/scaleObservation" },
+        "unit_labor": { "$ref": "#/$defs/scaleObservation" },
+        "total_labor_or_headcount": { "$ref": "#/$defs/scaleObservation" },
+        "role_and_wage_mix": { "$ref": "#/$defs/scaleObservation" },
+        "organization_or_site_count": { "$ref": "#/$defs/scaleObservation" },
+        "unit_cost": { "$ref": "#/$defs/scaleObservation" },
+        "total_spend_or_revenue": { "$ref": "#/$defs/scaleObservation" },
+        "queue_or_service_level": { "$ref": "#/$defs/scaleObservation" },
+        "released_capacity_destination": { "$ref": "#/$defs/scaleObservation" },
+        "rebound_or_induced_demand": { "$ref": "#/$defs/scaleObservation" },
+        "classification": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "contraction",
+              "productivity_release",
+              "scale_absorption",
+              "downstream_expansion",
+              "role_recomposition",
+              "externalization",
+              "unresolved"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "comparability_notes": { "type": "string", "minLength": 1 },
+        "unknowns": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "constraintRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_level",
+        "gate_mechanism",
+        "release_condition",
+        "leverage_level",
+        "leverage_mechanism",
+        "activation_dependency",
+        "observable"
+      ],
+      "properties": {
+        "gate_level": { "enum": ["none", "low", "medium", "high", "unknown"] },
+        "gate_mechanism": { "type": "string", "minLength": 1 },
+        "release_condition": { "type": "string", "minLength": 1 },
+        "leverage_level": { "enum": ["none", "low", "medium", "high", "unknown"] },
+        "leverage_mechanism": { "type": "string", "minLength": 1 },
+        "activation_dependency": { "type": "string", "minLength": 1 },
+        "observable": { "type": "string", "minLength": 1 }
+      }
+    },
+    "adoptionPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adoption_path_id",
+        "capability_scope",
+        "adoption_position",
+        "initiating_actor",
+        "old_function_holder",
+        "required_context",
+        "delegated_right_ids",
+        "retained_right_ids",
+        "jurisdiction_shift",
+        "integration_burden",
+        "evidence_ids",
+        "observable",
+        "falsifier"
+      ],
+      "properties": {
+        "adoption_path_id": { "type": "string", "minLength": 1 },
+        "capability_scope": { "enum": ["task", "job", "team", "function", "firm", "unknown"] },
+        "adoption_position": { "enum": ["beneath", "beside", "between", "outside", "mixed", "unknown"] },
+        "initiating_actor": { "type": "string", "minLength": 1 },
+        "old_function_holder": { "type": "string", "minLength": 1 },
+        "required_context": { "type": "string", "minLength": 1 },
+        "delegated_right_ids": { "$ref": "#/$defs/idArray" },
+        "retained_right_ids": { "$ref": "#/$defs/idArray" },
+        "jurisdiction_shift": { "enum": ["none", "partial", "substantial", "unknown"] },
+        "integration_burden": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "observable": { "type": "string", "minLength": 1 },
+        "falsifier": { "type": "string", "minLength": 1 }
+      }
+    },
+    "topologyTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transition_id",
+        "as_of",
+        "before_snapshot_id",
+        "after_snapshot_id",
+        "event_id",
+        "claim_ids",
+        "from_classification",
+        "to_classification",
+        "transition_stage",
+        "status",
+        "event_anchor",
+        "mechanisms",
+        "affected_node_ids",
+        "shared_interface_or_state",
+        "viability_change",
+        "observables",
+        "counterforces",
+        "falsifier",
+        "evidence_ids",
+        "review_trigger"
+      ],
+      "properties": {
+        "transition_id": { "type": "string", "minLength": 1 },
+        "as_of": { "$ref": "#/$defs/date" },
+        "before_snapshot_id": { "type": "string", "minLength": 1 },
+        "after_snapshot_id": { "type": ["string", "null"] },
+        "event_id": { "type": ["string", "null"] },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "from_classification": { "$ref": "#/$defs/structureClassification" },
+        "to_classification": { "$ref": "#/$defs/structureClassification" },
+        "transition_stage": {
+          "enum": ["none", "convergence_candidate", "observed_cluster", "qualified_cluster"]
+        },
+        "status": {
+          "enum": ["observed", "conditional", "forecast", "not_yet_observable", "contradicted", "no_change"]
+        },
+        "event_anchor": { "type": "string", "minLength": 1 },
+        "mechanisms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "substitution_relaxation",
+              "complement_activation",
+              "interface_convergence",
+              "demand_expansion",
+              "market_pruning",
+              "qualification_change",
+              "rights_reallocation"
+            ]
+          }
+        },
+        "affected_node_ids": { "$ref": "#/$defs/idArray" },
+        "shared_interface_or_state": { "type": "string", "minLength": 1 },
+        "viability_change": { "type": "string", "minLength": 1 },
+        "observables": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "counterforces": { "type": "array", "items": { "type": "string" } },
+        "falsifier": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "review_trigger": { "type": "string", "minLength": 1 }
+      }
+    },
+    "structureClassification": {
+      "enum": [
+        "direct_cone",
+        "feedback_cone",
+        "institutional_cone",
+        "emergent_cluster_cone",
+        "conditional_cone",
+        "cyclical_narrowness",
+        "hidden_cone",
+        "divergent_network",
+        "non_cone_network",
+        "unresolved"
+      ]
+    },
+    "views": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["technical_claim_ids", "nontechnical_claim_ids", "low_impact_control"],
+      "properties": {
+        "technical_claim_ids": { "$ref": "#/$defs/idArray" },
+        "nontechnical_claim_ids": { "$ref": "#/$defs/idArray" },
+        "low_impact_control": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        }
+      }
+    }
+  }
+}

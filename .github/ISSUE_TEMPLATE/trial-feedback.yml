@@ -1,0 +1,57 @@
+name: Trial feedback
+description: Report a real use, failure, missing node, or new use case
+title: "[trial] "
+labels: ["trial-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not post confidential documents, personal data, credentials, or copyrighted source bodies."
+  - type: input
+    id: version
+    attributes:
+      label: Skill version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Question and decision
+      description: What real decision or investigation were you trying to improve?
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Case boundary
+      description: What qualified output, geography/product boundary, and date did the answer use?
+  - type: textarea
+    id: missing
+    attributes:
+      label: Missing node, edge, bypass, or right
+    validations:
+      required: true
+  - type: textarea
+    id: useful
+    attributes:
+      label: Useful decision increment
+      description: What did you search, change, stop, or decide differently?
+  - type: textarea
+    id: falsifier
+    attributes:
+      label: Falsifier or strongest objection
+  - type: dropdown
+    id: classification
+    attributes:
+      label: Best failure or use classification
+      options:
+        - useful result
+        - method defect
+        - case boundary error
+        - evidence failure
+        - rendering failure
+        - tool failure
+        - unsuitable case
+        - new use case
+    validations:
+      required: true
+

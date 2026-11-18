@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0-draft.3",
+  "audit_id": "example-unresolved",
+  "mode": "industry_first",
+  "title": "Synthetic unresolved example",
+  "case": {
+    "Y": "A qualified output whose limiting path is not yet established",
+    "Q": "Accepted capacity",
+    "Omega": "Provisional boundary with incomplete evidence",
+    "as_of": "2026-10-29",
+    "evidence_cutoff": "2026-10-29",
+    "exclusions": ["Unsupported current-state conclusions"]
+  },
+  "structure": {
+    "classification": "unresolved",
+    "minimum_cut": [],
+    "alternatives": [],
+    "largest_unknowns": ["Which qualified path binds under current demand"]
+  },
+  "nodes": [
+    {
+      "node_id": "N1",
+      "label": "Candidate acceptance gate",
+      "function": "May determine whether output is accepted",
+      "owner": "Unknown",
+      "qualification": "Not yet evidenced",
+      "effective_width_basis": "Unknown qualified paths",
+      "substitutes": [],
+      "constraint_role": {
+        "gate_level": "unknown",
+        "gate_mechanism": "The evidence does not establish whether this candidate can accept or reject output",
+        "release_condition": "Unknown until the qualification rule and decision holder are identified",
+        "leverage_level": "unknown",
+        "leverage_mechanism": "The downstream amplification path has not been observed",
+        "activation_dependency": "Unknown complementary demand, capability, or qualification change",
+        "observable": "Traceable evidence links a change at this node to accepted system output"
+      },
+      "scores": {
+        "B_struct": {"status": "unknown", "explanation": "Insufficient evidence"},
+        "B_now": {"status": "unknown", "explanation": "Insufficient evidence"},
+        "P_joint": {"status": "unknown", "explanation": "Insufficient evidence"},
+        "P_own": {"status": "unknown", "explanation": "Insufficient evidence"},
+        "P_cycle": {"status": "unknown", "explanation": "Insufficient evidence"},
+        "P_now": {"status": "unknown", "explanation": "Insufficient evidence"},
+        "E": {"status": "point", "value": 0, "explanation": "No traceable current evidence"}
+      },
+      "evidence_ids": [],
+      "unknowns": ["Qualification rule", "Available substitutes", "Current activation"]
+    }
+  ],
+  "edges": [],
+  "claims": [
+    {
+      "claim_id": "C1",
+      "plain_claim": "The current evidence does not identify a defensible bottleneck.",
+      "technical_claim": "The provisional boundary lacks enough evidence to locate a minimum cut.",
+      "status": "speculative",
+      "epistemic_type": "unknown",
+      "evidence_ids": [],
+      "unknowns": ["Current qualified paths and acceptance rights"],
+      "falsifier": "Traceable evidence identifies a qualified path that all accepted output must cross.",
+      "review_trigger": "Qualified-path and acceptance evidence becomes available"
+    }
+  ],
+  "sources": [],
+  "rights": [],
+  "companies": [],
+  "hypotheses": [],
+  "events": [],
+  "snapshots": [
+    {
+      "snapshot_id": "SN1",
+      "as_of": "2026-10-29",
+      "evidence_cutoff": "2026-10-29",
+      "system_boundary": "Provisional boundary with incomplete evidence",
+      "node_ids": ["N1"],
+      "claim_ids": ["C1"],
+      "evidence_ids": [],
+      "review_note": "Unresolved regression fixture; completion gate not passed"
+    }
+  ],
+  "predictions": [],
+  "adoption_paths": [],
+  "topology_transitions": [],
+  "views": {
+    "technical_claim_ids": ["C1"],
+    "nontechnical_claim_ids": ["C1"],
+    "low_impact_control": null
+  }
+}

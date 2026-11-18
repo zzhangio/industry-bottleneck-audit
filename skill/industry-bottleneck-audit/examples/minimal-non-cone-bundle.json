@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0-draft.3",
+  "audit_id": "example-non-cone-network",
+  "mode": "industry_first",
+  "title": "Synthetic non-cone network example",
+  "case": {
+    "Y": "A qualified output delivered through either accepted path",
+    "Q": "Accepted service capacity",
+    "Omega": "One region and customer class",
+    "as_of": "2026-10-29",
+    "evidence_cutoff": "2026-10-29",
+    "exclusions": ["Paths outside the named qualification rule"]
+  },
+  "structure": {
+    "classification": "non_cone_network",
+    "minimum_cut": [],
+    "alternatives": ["N1", "N2"],
+    "largest_unknowns": ["Whether future demand growth could activate a shared upstream limit"]
+  },
+  "nodes": [
+    {
+      "node_id": "N1",
+      "label": "Qualified path A",
+      "function": "Delivers the accepted output independently",
+      "owner": "Provider A",
+      "qualification": "Customer acceptance",
+      "effective_width_basis": "Available accepted capacity",
+      "substitutes": ["N2"],
+      "constraint_role": {
+        "gate_level": "none",
+        "gate_mechanism": "Path B can carry the same accepted output if path A is unavailable",
+        "release_condition": "No unique release condition at this path",
+        "leverage_level": "low",
+        "leverage_mechanism": "More capacity improves local slack without controlling the full system",
+        "activation_dependency": "Only a shared upstream exposure or segment-specific demand could activate it",
+        "observable": "Removing path A leaves qualified output available through path B"
+      },
+      "scores": {
+        "B_struct": 1,
+        "B_now": 1,
+        "P_joint": 1,
+        "P_own": 1,
+        "P_cycle": 1,
+        "P_now": 1,
+        "E": 3
+      },
+      "evidence_ids": ["S1"],
+      "unknowns": []
+    },
+    {
+      "node_id": "N2",
+      "label": "Qualified path B",
+      "function": "Delivers the same accepted output independently",
+      "owner": "Provider B",
+      "qualification": "Customer acceptance",
+      "effective_width_basis": "Available accepted capacity",
+      "substitutes": ["N1"],
+      "constraint_role": {
+        "gate_level": "none",
+        "gate_mechanism": "Path A can carry the same accepted output if path B is unavailable",
+        "release_condition": "No unique release condition at this path",
+        "leverage_level": "low",
+        "leverage_mechanism": "More capacity improves local slack without controlling the full system",
+        "activation_dependency": "Only a shared upstream exposure or segment-specific demand could activate it",
+        "observable": "Removing path B leaves qualified output available through path A"
+      },
+      "scores": {
+        "B_struct": 1,
+        "B_now": 1,
+        "P_joint": 1,
+        "P_own": 1,
+        "P_cycle": 1,
+        "P_now": 1,
+        "E": 3
+      },
+      "evidence_ids": ["S1"],
+      "unknowns": []
+    }
+  ],
+  "edges": [],
+  "claims": [
+    {
+      "claim_id": "C1",
+      "plain_claim": "The bounded system currently has two accepted independent paths and no single binding cut.",
+      "technical_claim": "N1 and N2 are qualified substitutes; neither is a minimum cut in the frozen boundary.",
+      "status": "anchored",
+      "epistemic_type": "fact",
+      "evidence_ids": ["S1"],
+      "unknowns": ["Shared upstream exposure outside the boundary"],
+      "falsifier": "Both paths are shown to depend on one unavailable qualified input.",
+      "review_trigger": "A shared input shortage or qualification-rule change"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "S1",
+      "title": "Synthetic source for validator regression only",
+      "url": "https://example.com/non-cone-source",
+      "source_type": "other",
+      "published_at": "2026-10-20",
+      "accessed_at": "2026-10-29",
+      "primary": true,
+      "limitations": "Synthetic fixture; not real-world evidence."
+    }
+  ],
+  "rights": [],
+  "companies": [],
+  "hypotheses": [],
+  "events": [],
+  "snapshots": [
+    {
+      "snapshot_id": "SN1",
+      "as_of": "2026-10-29",
+      "evidence_cutoff": "2026-10-29",
+      "system_boundary": "One region and customer class",
+      "node_ids": ["N1", "N2"],
+      "claim_ids": ["C1"],
+      "evidence_ids": ["S1"],
+      "review_note": "Non-cone regression fixture"
+    }
+  ],
+  "predictions": [],
+  "adoption_paths": [],
+  "topology_transitions": [],
+  "views": {
+    "technical_claim_ids": ["C1"],
+    "nontechnical_claim_ids": ["C1"],
+    "low_impact_control": null
+  }
+}
